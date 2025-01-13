@@ -58,7 +58,7 @@ btnCloseMessage.addEventListener("click", () => {
 
 // style
 message.style.backgroundColor = "#37383d";
-message.style.width = "120%";
+// message.style.width = "120%";
 message.style.height =
   Number.parseFloat(getComputedStyle(message).height, 10) + 30 + "px";
 
@@ -301,3 +301,14 @@ dotContainer.addEventListener("click", (event) => {
     activateDot(currentSlide);
   }
 });
+
+window.addEventListener("afterprint", (event) => {
+  console.log("Print dialog closed.");
+  // Restore layout or make adjustments here
+});
+
+if (window.onafterprint !== undefined) {
+  console.log("The afterprint event is supported.");
+} else {
+  console.log("The afterprint event is not supported.");
+}
