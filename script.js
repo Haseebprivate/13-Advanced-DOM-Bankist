@@ -234,27 +234,70 @@ const slider = document.querySelector(".slider");
 const slides = document.querySelectorAll(".slide");
 const sliderBtnLeft = document.querySelector(".slider__btn--left");
 const sliderBtnRight = document.querySelector(".slider__btn--right");
+const dotContainer = document.querySelector(".dots");
 
 let currentSlide = 0;
 const maxSlide = slides.length;
-slides.forEach((slide, index) => {
-  slide.style.transform = `translateX(${100 * index}%)`;
-});
+// slides.forEach((slide, index) => {
+//   slide.style.transform = `translateX(${100 * index}%)`;
+// });
 
-sliderBtnRight.addEventListener("click", () => {
-  console.log("cli");
+function createDots() {
+  slides.forEach((_, index) => {
+    dotContainer.insertAdjacentHTML(
+      "beforeend",
+      `<button class='dots__dot' data-slide='${index}'></button>`
+    );
+  });
+}
+
+function activateDot(currentSlide) {
+  document.querySelectorAll(".dots__dot").forEach((dot) => {
+    dot.classList.remove("dots__dot--active");
+  });
+
+  document
+    .querySelector(`.dots__dot[data-slide='${currentSlide}']`)
+    .classList.add("dots__dot--active");
+}
+
+function goToSlide(currentSlide) {
+  slides.forEach((slide, index) => {
+    slide.style.transform = `translateX(${100 * (index - currentSlide)}%)`;
+  });
+}
+
+goToSlide(0);
+createDots();
+activateDot(currentSlide);
+
+const nextSlide = () => {
   currentSlide++;
   if (currentSlide === maxSlide) currentSlide = 0;
-  slides.forEach((slide, index) => {
-    slide.style.transform = `translateX(${100 * (index - currentSlide)}%)`;
-  });
-});
+  goToSlide(currentSlide);
+  activateDot(currentSlide);
+};
 
-sliderBtnLeft.addEventListener("click", () => {
-  console.log("cli");
+const previousSlide = () => {
   currentSlide--;
   if (currentSlide < 0) currentSlide = maxSlide - 1;
-  slides.forEach((slide, index) => {
-    slide.style.transform = `translateX(${100 * (index - currentSlide)}%)`;
-  });
+  goToSlide(currentSlide);
+  activateDot(currentSlide);
+};
+
+sliderBtnRight.addEventListener("click", nextSlide);
+
+sliderBtnLeft.addEventListener("click", previousSlide);
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowLeft") previousSlide();
+  if (event.key === "ArrowRight") nextSlide();
+});
+
+dotContainer.addEventListener("click", (event) => {
+  if (event.target.classList.contains("dots__dot")) {
+    currentSlide = Number(event.target.dataset.slide);
+    goToSlide(currentSlide);
+    activateDot(currentSlide);
+  }
 });
